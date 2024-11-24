@@ -15,9 +15,9 @@ var (
 
 func main() {
 	// Input HOST dan PORT
-	fmt.Print("Enter server host (default: localhost): ")
+	fmt.Print("Enter server host (default: 192.168.0.102): ")
 	host := readInput("192.168.0.102")
-	fmt.Print("Enter server port (default: 33000): ")
+	fmt.Print("Enter server port (default: 8089): ")
 	port := readInput("8089")
 
 	address := host + ":" + port

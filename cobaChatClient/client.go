@@ -11,19 +11,26 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
 var (
 	clientConn net.Conn
-	messages   *widget.Entry
+	messages   *widget.Label
 	mu         sync.Mutex
 )
 
 func main() {
 	// Membuat aplikasi Fyne
 	chatApp := app.New()
+	chatApp.Settings().SetTheme(theme.LightTheme()) // Menggunakan tema terang
 	window := chatApp.NewWindow("Chat Client")
+
+	// Menampilkan pesan dengan widget Label
+	messages = widget.NewLabel("")
+	scroll := container.NewScroll(messages)
+	scroll.SetMinSize(fyne.NewSize(400, 300)) // Ukuran minimum area pesan
 
 	// Input untuk pesan
 	messageInput := widget.NewEntry()
@@ -41,14 +48,10 @@ func main() {
 		}
 	})
 
-	// Menampilkan pesan
-	messages = widget.NewMultiLineEntry()
-	messages.Disable()
-
 	// Layout aplikasi
 	window.SetContent(container.NewVBox(
-		widget.NewLabel("Chat Messages"),
-		messages,
+		widget.NewLabelWithStyle("Chat Messages", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+		scroll,
 		messageInput,
 		sendButton,
 	))
@@ -63,9 +66,9 @@ func main() {
 
 func connectToServer() {
 	// Input HOST dan PORT
-	fmt.Print("Enter server host (default: localhost): ")
+	fmt.Print("Enter server host (default: 192.168.0.102): ")
 	host := readInput("192.168.0.102")
-	fmt.Print("Enter server port (default: 33000): ")
+	fmt.Print("Enter server port (default: 8089): ")
 	port := readInput("8089")
 
 	address := host + ":" + port
@@ -102,7 +105,7 @@ func appendMessage(message string) {
 	defer mu.Unlock()
 
 	current := messages.Text
-	messages.SetText(current + message + "\n")
+	messages.SetText(current + "\n" + message)
 }
 
 func readInput(defaultValue string) string {
